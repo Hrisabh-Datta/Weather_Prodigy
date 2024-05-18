@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <title>weatherapp</title>
+    <style>
+        h1{
+        font-family:"Poetsen One", sans-serif;
+        }
+        body {
+           background-image: url("https://images.theconversation.com/files/336133/original/file-20200519-152298-1icmco7.jpg?ixlib=rb-4.1.0&rect=867%2C810%2C3877%2C2347&q=20&auto=format&w=320&fit=clip&dpr=2&usm=12&cs=strip");
+           background-size: cover;
+            background-repeat: no-repeat;
+        }
+        label{
+        color: rgb(44, 207, 207);
+        }
+        #weatherInfo {
+            margin-top: 20px;
+        }
+        #error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center; color:black">Weather App</h1>
+    <label for="cityInput">Enter city:</label>
+    <input type="text" id="cityInput">
+    <button onclick="getWeather()">Get Weather</button>
+    <div id="weatherInfo"></div>
+    <div id="error"></div>
+    <script>
+        function getWeather() {
+            var city = document.getElementById("cityInput").value;
+            var apiKey = '48d040744bb84cb6a3a120915242703';
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "https://api.weatherapi.com/v1/current.json?key=" + apiKey
+                + "&q=" + city, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        displayWeather(response);
+                    } else {
+                        displayError("Failed to fetch weather data. Status code: " +
+                            xhr.status);
+                    }
+                }
+            };
+            xhr.send();
+        }
+        function displayWeather(data) {
+            var weatherInfoDiv = document.getElementById("weatherInfo");
+            weatherInfoDiv.innerHTML = "<h2>Weather Information for " +
+                data.location.name + ", " + data.location.country + "</h2>";
+            weatherInfoDiv.innerHTML += "<p>Wind Speed: " + data.current.wind_mph + " mph</p > "; 
+            weatherInfoDiv.innerHTML += "<p>Wind Speed: " + data.current.wind_kph + " kph</p > "; 
+            weatherInfoDiv.innerHTML += "<p>Wind Degree: " + data.current.wind_degree
+                + "</p>";
+            weatherInfoDiv.innerHTML += "<p>Wind Direction: " + data.current.wind_dir
+                + "</p>";
+            weatherInfoDiv.innerHTML += "<p>Pressure: " + data.current.pressure_in + " in</p > "; 
+            weatherInfoDiv.innerHTML += "<p>Humidity: " + data.current.humidity +
+                "%</p>";
+            weatherInfoDiv.innerHTML += "<p>Temperature: " + data.current.temp_c +
+                "°C</p>";
+            weatherInfoDiv.innerHTML += "<p>Weather Condition: " +
+                data.current.condition.text + "</p>";
+            displayError("")
+        }
+        function displayError(message) {
+            var errorDiv = document.getElementById("error");
+            errorDiv.textContent = message;
+        } 
+    </script>
+</body>
+</html>
